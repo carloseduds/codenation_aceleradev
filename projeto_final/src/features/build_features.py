@@ -6,14 +6,14 @@ class DadoFaltantes:
         self.df = df
         self.dataset = dataset
         self.colunas = sorted(set([index for index,
-                                   coluna in enumerate(self._nan_contar(self.df)['% Nan']) if (coluna >= 0.25) | (index == 0)]))
+                                   coluna in enumerate(self.nan_contar(self.df)['% Nan']) if (coluna >= 0.25) | (index == 0)]))
     
-    def _nan_contar(self, df):
-        dataset = (pd.DataFrame(data=[list(df.columns),
+    def nan_contar(self, df):
+        dataset_na = (pd.DataFrame(data=[list(df.columns),
                                 list(df.isna().sum()),
                                 list(round(df.isna().sum()/df.shape[0], 2))]).
                    T.rename(columns={0:'atributos', 1: "qtde Nan", 2:'% Nan'}))
-        return dataset
+        return dataset_na
 
     def dropnan_coluna_linha(self):
         dataset_trat = self._imputar_dados_nan()
