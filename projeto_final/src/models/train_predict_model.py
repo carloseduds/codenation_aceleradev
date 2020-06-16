@@ -15,24 +15,22 @@ def train_predict_model(dataset_portfolio, dataset_market, dataset_previsao):
             quantidade_empresas = len(set(np.ravel(predicao_v1[1])))
     #Indices da empresas prevista como mais aderentes
     indice_mais_aderentes = list(set(np.ravel(predicao_v1[1])))
-    return indice_mais_aderentes, predicao_v1
+    return indice_mais_aderentes
             
 def empresa_recomendada(predicao, portifolio, market_limpo, market_total, dataset_na):
   #Indices da empresas prevista como mais aderentes
-    indice_mais_aderentes = list(set(np.ravel(predicao[1])))
-
     empresas_recomendadas = portifolio[portifolio.index.
-                                                  isin(indice_mais_aderentes)].reset_index(drop=True)
+                                                  isin(predicao)].reset_index(drop=True)
 
     #Empresas recomendadas
     empresas_recomendadas = market_limpo[market_limpo.index.
-                                                  isin(indice_mais_aderentes)].reset_index(drop=True)
+                                                  isin(predicao)].reset_index(drop=True)
 
     #Retirando as informaçoes das colunas
     empresas_recomendadas_toda_info = market_total[market_total['id'].
                                                  isin(empresas_recomendadas['id'])].reset_index(drop=True)
 
-    empresas_recomendadas_avaliacao = DadoFaltantes(empresas_recomendadas_toda_info, dataset_na).dropnan_coluna_linha()
+    empresas_recomendadas_avaliacao = DadoFaltantes(empresas_recomendadas_toda_info, market_total).dropnan_coluna_linha()
     empresas_recomendadas_avaliacao = dimensionamento(empresas_recomendadas_avaliacao).label_normalizer('normalizer')
 
     avaliacao = evaluate(portifolio.iloc[:, 1:], empresas_recomendadas_avaliacao.iloc[:, 1:]).cosine_similarity()
